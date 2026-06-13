@@ -1,0 +1,5 @@
+com\cineverse\gateway\config\GatewayConfig.class
+com\cineverse\gateway\filter\AuthenticationFilter$Config.class
+com\cineverse\gateway\filter\AuthenticationFilter.class
+com\cineverse\gateway\GatewayApplication.class
+com\cineverse\gateway\util\JwtUtil.class
