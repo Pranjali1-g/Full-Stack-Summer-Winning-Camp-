@@ -1,0 +1,58 @@
+[cite_start]version: '3.8' [cite: 98]
+
+[cite_start]services: [cite: 99]
+  # Infrastructure Module: PostgreSQL [cite: 18, 106]
+  postgres:
+    [cite_start]image: postgres:latest [cite: 107]
+    container_name: cineverse-postgres
+    ports:
+      - "5432:5432"
+    [cite_start]environment: [cite: 108]
+      [cite_start]POSTGRES_DB: bookingdb [cite: 109]
+      [cite_start]POSTGRES_USER: user [cite: 110]
+      [cite_start]POSTGRES_PASSWORD: password [cite: 111]
+
+  # Infrastructure Module: Redis Cache [cite: 20, 112]
+  redis:
+    [cite_start]image: redis:alpine [cite: 113]
+    container_name: cineverse-redis
+    ports:
+      - "6379:6379"
+
+  # Infrastructure Module: RabbitMQ Message Broker [cite: 21, 114]
+  rabbitmq:
+    [cite_start]image: rabbitmq:3-management [cite: 115]
+    container_name: cineverse-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Management Web UI
+
+  # Business Logic Module: Booking Microservice [cite: 14, 100]
+  booking-service:
+    [cite_start]build: ./booking-service [cite: 101]
+    container_name: cineverse-booking-service
+    ports:
+      - [cite_start]"8080:8080" [cite: 102, 103]
+    [cite_start]depends_on: [cite: 104]
+      - [cite_start]postgres [cite: 105]
+      - redis
+      - rabbitmq
+    [cite_start]environment: [cite: 118, 124]
+      # Containers communicate via service names inside the network instead of localhost [cite: 128, 130]
+      [cite_start]SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bookingdb [cite: 125]
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+
+  # Client Interface Module: React Frontend [cite: 17]
+  react-frontend:
+    build: ./react-frontend
+    container_name: cineverse-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - booking-service
+      
