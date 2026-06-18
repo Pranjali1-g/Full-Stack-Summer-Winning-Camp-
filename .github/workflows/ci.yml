@@ -1,0 +1,34 @@
+[cite_start]name: CineVerse CI Pipeline [cite: 252, 338]
+
+[cite_start]on: [cite: 253, 339]
+  [cite_start]push: [cite: 254, 340]
+  # Triggers automation automatically when code hits the main production branch [cite: 255, 341, 358]
+    branches: [ "main" ] 
+
+[cite_start]jobs: [cite: 256, 342]
+  [cite_start]build-and-test: [cite: 343]
+    [cite_start]runs-on: ubuntu-latest [cite: 258, 344]
+
+    [cite_start]steps: [cite: 259, 345]
+      # Step 1: Pull down the repository source code onto the GitHub virtual runner [cite: 212, 213, 360]
+      - [cite_start]name: Checkout Code [cite: 346]
+        [cite_start]uses: actions/checkout@v3 [cite: 260, 347]
+
+      # Step 2: Set up Java 17 environment natively on the virtual machine [cite: 348, 361]
+      - [cite_start]name: Set up Java 17 [cite: 348]
+        [cite_start]uses: actions/setup-java@v3 [cite: 349]
+        with:
+          [cite_start]distribution: 'temurin' [cite: 351]
+          [cite_start]java-version: '17' [cite: 352]
+
+      # Step 3: Run your safe compilation and package verification [cite: 214, 353, 362]
+      - [cite_start]name: Build Project [cite: 353]
+        run: |
+          cd cineverse/day-8/booking-service
+          mvn clean install -DskipTests [cite: 261, 354]
+
+      # Step 4: Run the specific test suite we just fixed [cite: 215, 355, 363]
+      - [cite_start]name: Run Test Suite [cite: 355]
+        run: |
+          cd cineverse/day-8/booking-service
+          mvn test [cite: 356]
